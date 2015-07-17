@@ -1,12 +1,102 @@
 <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edit_text_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/user_name"
+        android:inputType="text"/>
+
+    <Button
+        android:id="@+id/button_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/register"/>
 
     <TextView
+        android:id="@+id/text_view_user_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="DELETE ME!!!"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_green_dark"/>
+
+    <EditText
+        android:id="@+id/edit_text_reservation_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/reservation_time"
+        android:inputType="text"/>
+
+    <Button
+        android:id="@+id/button_create_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_table"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_green_dark"/>
+
+    <ListView
+        android:id="@+id/list_view_tables"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/button_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_green_dark"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edit_text_join_table_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/table_id"/>
+
+        <Button
+            android:id="@+id/button_join_table"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/join_table"/>
+
+        <EditText
+            android:id="@+id/edit_text_leave_table_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/table_id"/>
+
+        <Button
+            android:id="@+id/button_leave_table"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/leave_table"/>
+
+    </LinearLayout>
 
 </LinearLayout>

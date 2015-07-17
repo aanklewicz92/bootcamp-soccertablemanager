@@ -23,144 +23,146 @@ import retrofit.client.Response;
 
 public class ApiManger {
 
-	private static final String ENDPOINT = "https://dor-inpost.herokuapp.com";
+    public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+    public static final String PAGE_NOT_FOUND = "Page not found";
+    public static final String UNKNOWN_ERROR = "Unknown error";
+    private static final String ENDPOINT = "https://dor-inpost.herokuapp.com";
+    private final ApiInterface mApiInterface;
+    private final SoccerTableManagerErrorHandler mErrorHandler;
 
-	public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
-	public static final String PAGE_NOT_FOUND = "Page not found";
-	public static final String UNKNOWN_ERROR = "Unknown error";
+    public ApiManger() {
+        mApiInterface = new RestAdapter.Builder()
+                .setEndpoint(ENDPOINT)
+                .setLog(new AndroidLog("soccer-table"))
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .build().create(ApiInterface.class);
 
-	private final ApiInterface mApiInterface;
-	private final SoccerTableManagerErrorHandler mErrorHandler;
+        mErrorHandler = new SoccerTableManagerErrorHandler();
 
-	public ApiManger() {
-		mApiInterface = new RestAdapter.Builder()
-				.setEndpoint(ENDPOINT)
-				.setLog(new AndroidLog("soccer-table"))
-				.setLogLevel(RestAdapter.LogLevel.FULL)
-				.build().create(ApiInterface.class);
+        EventBus.getDefault().register(this);
+    }
 
-		mErrorHandler = new SoccerTableManagerErrorHandler();
+    private synchronized void getTables() {
+        try {
+            final Tables tables = mApiInterface.getTables();
+            postEvent(new GetTablesResponseEvent(tables.getTables()));
+        } catch (Exception exception) {
+            final ApiError apiError = mErrorHandler.handleError(exception);
+            postEvent(new GetTablesResponseEvent(apiError));
+        }
+    }
 
-		EventBus.getDefault().register(this);
-	}
+    private synchronized void register(final String userName) {
+        try {
+            final ResponseStatus status = mApiInterface.register(userName);
+            postEvent(new RegisterResponseEvent(status.getStatusText(), status.getId()));
+        } catch (Exception exception) {
+            final ApiError apiError = mErrorHandler.handleError(exception);
+            postEvent(new RegisterResponseEvent(apiError));
+        }
+    }
 
-	private synchronized void getTables() {
-		try {
-			final Tables tables = mApiInterface.getTables();
-			postEvent(new GetTablesResponseEvent(tables.getTables()));
-		} catch (Exception exception) {
-			final ApiError apiError = mErrorHandler.handleError(exception);
-			postEvent(new GetTablesResponseEvent(apiError));
-		}
-	}
+    private synchronized void createTable(final int userId, final String timeText) {
+        try {
+            final ResponseStatus status = mApiInterface.createTable(userId, timeText);
+            postEvent(new CreateTableResponseEvent(status.getStatusText(), status.getId()));
+        } catch (Exception exception) {
+            final ApiError apiError = mErrorHandler.handleError(exception);
+            postEvent(new CreateTableResponseEvent(apiError));
+        }
+    }
 
-	private synchronized void register(final String userName) {
-		try {
-			final ResponseStatus status = mApiInterface.register(userName);
-			postEvent(new RegisterResponseEvent(status.getStatusText(), status.getId()));
-		} catch (Exception exception) {
-			final ApiError apiError = mErrorHandler.handleError(exception);
-			postEvent(new RegisterResponseEvent(apiError));
-		}
-	}
+    private synchronized void joinToTable(final int tableId, final int userId) {
+        try {
+            final ResponseStatus status = mApiInterface.joinToTable(tableId, userId);
+            postEvent(new JoinResponseEvent(status.getStatusText()));
+        } catch (Exception exception) {
+            final ApiError apiError = mErrorHandler.handleError(exception);
+            postEvent(new JoinResponseEvent(apiError));
+        }
+    }
 
-	private synchronized void createTable(final int userId, final String timeText) {
-		try {
-			final ResponseStatus status = mApiInterface.createTable(userId, timeText);
-			postEvent(new CreateTableResponseEvent(status.getStatusText(), status.getId()));
-		} catch (Exception exception) {
-			final ApiError apiError = mErrorHandler.handleError(exception);
-			postEvent(new CreateTableResponseEvent(apiError));
-		}
-	}
+    private synchronized void leaveTable(final int tableId, final int userId) {
+        try {
+            final ResponseStatus status = mApiInterface.leaveTable(tableId, userId);
+            postEvent(new LeaveResponseEvent(status.getStatusText()));
+        } catch (Exception exception) {
+            final ApiError apiError = mErrorHandler.handleError(exception);
+            postEvent(new LeaveResponseEvent(apiError));
+        }
+    }
 
-	private synchronized void joinToTable(final int tableId, final int userId) {
-		try {
-			final ResponseStatus status = mApiInterface.joinToTable(tableId, userId);
-			postEvent(new JoinResponseEvent(status.getStatusText()));
-		} catch (Exception exception) {
-			final ApiError apiError = mErrorHandler.handleError(exception);
-			postEvent(new JoinResponseEvent(apiError));
-		}
-	}
+    private void postEvent(final Object event) {
+        EventBus.getDefault().post(event);
+    }
 
-	private synchronized void leaveTable(final int tableId, final int userId) {
-		try {
-			final ResponseStatus status = mApiInterface.leaveTable(tableId, userId);
-			postEvent(new LeaveResponseEvent(status.getStatusText()));
-		} catch (Exception exception) {
-			final ApiError apiError = mErrorHandler.handleError(exception);
-			postEvent(new LeaveResponseEvent(apiError));
-		}
-	}
+    /**
+     * EVENTS SUBSCRIPTIONS *
+     */
 
-	private void postEvent(final Object event) {
-		EventBus.getDefault().post(event);
-	}
+    @SuppressWarnings("unused")
+    public void onEventBackgroundThread(GetTablesRequestEvent event) {
+        getTables();
+    }
 
-	/** EVENTS SUBSCRIPTIONS **/
+    @SuppressWarnings("unused")
+    public void onEventBackgroundThread(RegisterRequestEvent event) {
+        register(event.getUserName());
+    }
 
-	@SuppressWarnings("unused")
-	public void onEventBackgroundThread(GetTablesRequestEvent event) {
-		getTables();
-	}
+    @SuppressWarnings("unused")
+    public void onEventBackgroundThread(CreateTableRequestEvent event) {
+        createTable(event.getUserId(), event.getTimeText());
+    }
 
-	@SuppressWarnings("unused")
-	public void onEventBackgroundThread(RegisterRequestEvent event) {
-		register(event.getUserName());
-	}
+    @SuppressWarnings("unused")
+    public void onEventBackgroundThread(JoinRequestEvent event) {
+        joinToTable(event.getTableId(), event.getUserId());
+    }
 
-	@SuppressWarnings("unused")
-	public void onEventBackgroundThread(CreateTableRequestEvent event) {
-		createTable(event.getUserId(), event.getTimeText());
-	}
+    @SuppressWarnings("unused")
+    public void onEventBackgroundThread(LeaveRequestEvent event) {
+        leaveTable(event.getTableId(), event.getUserId());
+    }
 
-	@SuppressWarnings("unused")
-	public void onEventBackgroundThread(JoinRequestEvent event) {
-		joinToTable(event.getTableId(), event.getUserId());
-	}
+    /**
+     * ***************************
+     */
 
-	@SuppressWarnings("unused")
-	public void onEventBackgroundThread(LeaveRequestEvent event) {
-		leaveTable(event.getTableId(), event.getUserId());
-	}
+    class SoccerTableManagerErrorHandler {
 
-	/*******************************/
+        public ApiError handleError(final Throwable throwable) {
+            if (throwable instanceof RetrofitError) {
+                return handleRetrofitError(throwable);
+            } else {
+                throw new RuntimeException(throwable);
+            }
+        }
 
-	class SoccerTableManagerErrorHandler {
+        private ApiError handleRetrofitError(final Throwable throwable) {
+            final RetrofitError retrofitError = (RetrofitError) throwable;
+            final Response response = retrofitError.getResponse();
 
-		public ApiError handleError(final Throwable throwable) {
-			if (throwable instanceof RetrofitError) {
-				return handleRetrofitError(throwable);
-			} else {
-				throw new RuntimeException(throwable);
-			}
-		}
+            if (response != null) {
+                final int status = response.getStatus();
+                switch (status) {
+                    case 422:
+                        return handleKnownErrors(retrofitError, response);
+                    case 500:
+                        return new ApiError(status + "", INTERNAL_SERVER_ERROR);
+                    case 404:
+                        return new ApiError(status + "", PAGE_NOT_FOUND);
+                    default:
+                        return new ApiError(status + "", UNKNOWN_ERROR);
+                }
+            } else {
+                throw new RuntimeException(throwable);
+            }
+        }
 
-		private ApiError handleRetrofitError(final Throwable throwable) {
-			final RetrofitError retrofitError = (RetrofitError) throwable;
-			final Response response = retrofitError.getResponse();
-
-			if (response != null) {
-				final int status = response.getStatus();
-				switch (status) {
-					case 422:
-						return handleKnownErrors(retrofitError, response);
-					case 500:
-						return new ApiError(status + "", INTERNAL_SERVER_ERROR);
-					case 404:
-						return new ApiError(status + "", PAGE_NOT_FOUND);
-					default:
-						return new ApiError(status + "", UNKNOWN_ERROR);
-				}
-			} else {
-				throw new RuntimeException(throwable);
-			}
-		}
-
-		private ApiError handleKnownErrors(final RetrofitError retrofitError, final Response response) {
-			final Error Error = (Error) retrofitError.getBodyAs(Error.class);
-			return new ApiError(response.getStatus() + "", Error.getErrorMessage());
-		}
-	}
+        private ApiError handleKnownErrors(final RetrofitError retrofitError, final Response response) {
+            final Error Error = (Error) retrofitError.getBodyAs(Error.class);
+            return new ApiError(response.getStatus() + "", Error.getErrorMessage());
+        }
+    }
 }

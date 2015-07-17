@@ -6,9 +6,10 @@ import java.util.List;
 
 public class Tables {
 
-	@SerializedName(value = "tables") List<Table> mTables;
+    @SerializedName(value = "tables")
+    List<Table> mTables;
 
-	public List<Table> getTables() {
-		return mTables;
-	}
+    public List<Table> getTables() {
+        return mTables;
+    }
 }

@@ -1,3 +1,4 @@
 package com.droidsonroids.bootcamp.soccertablemanager.event;
 
-public class GetTablesRequestEvent {}
+public class GetTablesRequestEvent {
+}

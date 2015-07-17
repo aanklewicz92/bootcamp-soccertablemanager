@@ -4,15 +4,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResponseStatus {
 
-	@SerializedName(value = "status") String mStatusText;
+    @SerializedName(value = "status")
+    String mStatusText;
 
-	@SerializedName(value = "id") int mId;
+    @SerializedName(value = "id")
+    int mId;
 
-	public String getStatusText() {
-		return mStatusText;
-	}
+    public String getStatusText() {
+        return mStatusText;
+    }
 
-	public int getId() {
-		return mId;
-	}
+    public int getId() {
+        return mId;
+    }
 }

@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Error {
 
-	@SerializedName(value = "error") String mErrorMessage;
+    @SerializedName(value = "error")
+    String mErrorMessage;
 
-	public String getErrorMessage() {
-		return mErrorMessage;
-	}
+    public String getErrorMessage() {
+        return mErrorMessage;
+    }
 }

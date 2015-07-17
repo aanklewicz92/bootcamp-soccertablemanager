@@ -2,13 +2,13 @@ package com.droidsonroids.bootcamp.soccertablemanager.event;
 
 public class RegisterRequestEvent {
 
-	private final String mUserName;
+    private final String mUserName;
 
-	public RegisterRequestEvent(final String userName) {
-		mUserName = userName;
-	}
+    public RegisterRequestEvent(final String userName) {
+        mUserName = userName;
+    }
 
-	public String getUserName() {
-		return mUserName;
-	}
+    public String getUserName() {
+        return mUserName;
+    }
 }

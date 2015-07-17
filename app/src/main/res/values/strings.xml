@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">SoccerTableManager</string>
+    <string name="user_name">Name</string>
+    <string name="register">Register</string>
+    <string name="register_success">Register success!</string>
+    <string name="register_error">Register error…</string>
+    <string name="user_id_label">UserID:</string>
+    <string name="reservation_time">Time</string>
+    <string name="create_table">Create Table</string>
+    <string name="create_table_success">Create table success!</string>
+    <string name="create_table_error">Create table error…</string>
+    <string name="refresh">Refresh</string>
+    <string name="get_tables_success">Get tables success!</string>
+    <string name="get_tables_error">Get tables error…</string>
+    <string name="join_table">Join</string>
+    <string name="table_id">Table id</string>
+    <string name="leave_table">Leave</string>
+    <string name="empty_name">Empty name!</string>
+    <string name="empty_time">Empty time!</string>
+    <string name="empty_table_id">Empty table Id!</string>
+    <string name="join_table_success">Join table success!</string>
+    <string name="join_table_error">Join table error…</string>
+    <string name="leave_table_success">Leave table success!</string>
+    <string name="leave_table_error">Leave table error…</string>
+    <string name="already_in">Already joined!</string>
+    <string name="action_type_question">What do you want to do?</string>
 </resources>
